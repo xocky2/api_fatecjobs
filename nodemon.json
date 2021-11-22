@@ -1,0 +1,9 @@
+{
+    "env" : {
+        "MYSQL_USER": "root",
+        "MYSQL_PASSWORD": "asd@1234",
+        "MYSQL_DATABASE": "fatecjobs",
+        "MYSQL_HOST": "localhost",
+        "MYSQL_PORT": 3306
+    }
+}

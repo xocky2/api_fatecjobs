@@ -11,6 +11,20 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false})); //apenas dados simples
 app.use(bodyParser.json()); //apenas json de entrada no body
 
+app.use((req,res,next)=>{
+    res.header('Acces-Control-Allow-Origin','*');
+    res.header('Acces-Control-Allow-Header',
+    'Origin, X-Requrested-With, Content-Type,Accept, Authorisation'
+    );
+
+    if(req.method === 'OPTIONS'){
+        res.header('Acess-Control-Allow-Methods','PUT, POST, PATCH, DELETE, GET');
+        return res.status(200).send({});
+    }
+
+    next();
+})
+
 app.use('/aluno', rotaAluno);
 app.use('/vaga', rotaVaga);
 
