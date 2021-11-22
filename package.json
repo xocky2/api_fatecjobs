@@ -1,0 +1,21 @@
+{
+  "name": "rest-api-fatecjobs",
+  "version": "1.0.0",
+  "description": "API REST para consumo do APP e Website do FatecJOBS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "api",
+    "nodejs",
+    "fatec",
+    "rest",
+    "mysql"
+  ],
+  "author": "Giovanni Rios Barros",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
