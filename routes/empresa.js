@@ -1,6 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql').pool;
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: function (req,file,cb){
+        cb(null, './uploads/')
+    },
+    
+    filename: function(req,file,cb){
+        let data = new Date().toISOString().replace(/:/g, '-') + '-';
+        cb(null, data + file.originalname );
+    }
+});
+const upload = multer({storage: storage});
+
 
 //retorna todas empresas
 router.get('/', (req, res, next) => {
@@ -56,14 +70,15 @@ router.post('/login',(req, res, next)=>{
 });
 
 //insere uma empresa
-router.post('/', (req, res, next) => {
+router.post('/',  upload.single('empresa_imagem'),(req, res, next) => {
+    console.log(req.file);
     if ( req.body.senha === req.body.confirmPassword){
         mysql.getConnection((error,conn)=>{
             if(error){return res.status(500).send({error: error})}
     
             conn.query(
                 'insert into empresa (email,senha,nome_fantasia,area_atuacao,cidade,bio,foto) values(?,?,?,?,?,?,?);',
-                [req.body.email, req.body.senha, req.body.nome_fantasia, req.body.area_atuacao, req.body.cidade, req.body.bio, req.body.foto],
+                [req.body.email, req.body.senha, req.body.nome_fantasia, req.body.area_atuacao, req.body.cidade, req.body.bio, req.file.path],
                 
                 (error, resultado, field) => {
                     conn.release();

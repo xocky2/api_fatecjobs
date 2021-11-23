@@ -37,9 +37,10 @@ router.get('/candidatura', (req, res, next) => {
         mysql.getConnection((error,conn)=>{
             if(error){return res.status(500).send({error: error})}
             conn.query(
-                `SELECT * FROM vaga where idaluno_fk = ?;`,
+                `SELECT * FROM candidatura inner join vaga on candidatura.idvaga_fk= vaga.idvaga where candidatura.idaluno_fk = ?;`,
                 [req.body.idaluno],
                 (error, resultado,fields) =>{
+                    conn.release();
                     if(error){return res.status(500).send({error: error})}
                     return res.status(200).send({response: resultado});
 
@@ -50,9 +51,10 @@ router.get('/candidatura', (req, res, next) => {
         mysql.getConnection((error,conn)=>{
             if(error){return res.status(500).send({error: error})}
             conn.query(
-                `SELECT * FROM vaga where idvaga_fk = ?;`,
+                `SELECT * FROM candidatura inner join aluno on candidatura.idaluno_fk= aluno.idaluno where candidatura.idvaga_fk = ?;`,
                 [req.body.idvaga],
                 (error, resultado,fields) =>{
+                    conn.release();
                     if(error){return res.status(500).send({error: error})}
                     return res.status(200).send({response: resultado});
 
@@ -60,6 +62,27 @@ router.get('/candidatura', (req, res, next) => {
             )
         });
     }
+});
+
+//Insere uma candidatura
+router.post('/candidatura', (req, res, next) => {
+    mysql.getConnection((error,conn)=>{
+        if(error){return res.status(500).send({error: error})}
+        conn.query('insert into candidatura (idaluno_fk,idvaga_fk) values(?,?);',
+            [req.body.idaluno, req.body.idvaga],
+            (error, resultado, field) => {
+                conn.release();
+                if(error){return res.status(500).send({error: error})}
+                return res.status(201).send({
+                    mensagem: 'Candidatura realizada com sucesso',
+                    idcandidatura: resultado.insertId
+                 });
+            }
+            
+        )
+    });
+
+
 });
 
 //insere uma vaga

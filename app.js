@@ -4,11 +4,13 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 
 
+
 const rotaAluno = require('./routes/aluno');
 const rotaEmpresa = require('./routes/empresa');
 const rotaVaga = require('./routes/vaga');
 
 app.use(morgan('dev'));
+app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: false})); //apenas dados simples
 app.use(bodyParser.json()); //apenas json de entrada no body
 
