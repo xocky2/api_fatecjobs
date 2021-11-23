@@ -1,6 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('../mysql').pool;
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: function (req,file,cb){
+        cb(null, './uploads/')
+    },
+    
+    filename: function(req,file,cb){
+        let data = new Date().toISOString().replace(/:/g, '-') + '-';
+        cb(null, data + file.originalname );
+    }
+});
+const upload = multer({storage: storage});
 
 //retorna todos os alunos
 router.get('/', (req, res, next) => {
@@ -40,14 +53,15 @@ router.post('/login',(req, res, next)=>{
 });
 
 //insere um aluno
-router.post('/', (req, res, next) => {
-    if ( req.body.senha === req.body.confirmPassword){
+router.post('/', upload.single('aluno_imagem'), (req, res, next) => {
+    console.log(req.file);
+        if ( req.body.senha === req.body.confirmPassword){
     mysql.getConnection((error,conn)=>{
-        if(error){return res.status(500).send({error: error})}
+        if(error){return res.status(500).send({error: error, path:storage.destination})}
 
         conn.query(
             'insert into aluno (ra,email,senha,nome,bio,empregado,foto,github)values(?,?,?,?,?,?,?,?)',
-            [req.body.ra, req.body.email,req.body.senha,req.body.nome,req.body.bio,req.body.empregado,req.body.foto, req.body.github],
+            [req.body.ra, req.body.email,req.body.senha,req.body.nome,req.body.bio,req.body.empregado,req.file.path, req.body.github],
             
             (error, resultado, field) => {
                 conn.release();
