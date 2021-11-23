@@ -1,9 +1,9 @@
 {
     "env" : {
-        "MYSQL_USER": "root",
-        "MYSQL_PASSWORD": "asd@1234",
-        "MYSQL_DATABASE": "fatecjobs",
-        "MYSQL_HOST": "localhost",
+        "MYSQL_USER": "b9ad8ad44e0ca6",
+        "MYSQL_PASSWORD": "45f23bbb",
+        "MYSQL_DATABASE": "heroku_58d973d7a8f53ff",
+        "MYSQL_HOST": "us-cdbr-east-04.cleardb.com",
         "MYSQL_PORT": 3306
     }
 }
