@@ -3,7 +3,7 @@
         "MYSQL_USER": "fatecjobs",
         "MYSQL_PASSWORD": "asd123456",
         "MYSQL_DATABASE": "fatecjobs",
-        "MYSQL_HOST": "mysql.fatecjobs.kinghost.net",
+        "MYSQL_HOST": "mysql01-farm10.kinghost.net",
         "MYSQL_PORT": 3306
     }
 }

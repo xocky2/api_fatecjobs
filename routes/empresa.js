@@ -22,7 +22,7 @@ router.get('/', (req, res, next) => {
         mysql.getConnection((error,conn)=>{
             if(error){return res.status(500).send({error: error})}
             conn.query(
-                `SELECT * FROM EMPRESA where nome_fantasia like ("%${req.body.nome_fantasia}%");`,
+                `SELECT * FROM empresa where nome_fantasia like ("%${req.body.nome_fantasia}%");`,
                 (error, resultado,fields) =>{
                     if(error){return res.status(500).send({error: error})}
                     return res.status(200).send({response: resultado});
@@ -36,7 +36,7 @@ router.get('/', (req, res, next) => {
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'SELECT * FROM EMPRESA;',
+            'SELECT * FROM empresa;',
             (error, resultado,fields) =>{
                 if(error){return res.status(500).send({error: error})}
                 return res.status(200).send({response: resultado})
