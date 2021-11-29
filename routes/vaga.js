@@ -91,7 +91,7 @@ router.post('/', (req, res, next) => {
             if(error){return res.status(500).send({error: error})}
     
             conn.query(
-                'insert into vaga (idempresa_fk,titulo,descricao,localizacao,salario,tipo) values(?,?,?,?,?);',
+                'insert into vaga (idempresa_fk,titulo,descricao,localizacao,salario,tipo) values(?,?,?,?,?,?);',
                 [req.body.idempresa,req.body.titulo,req.body.descricao, req.body.localizacao, req.body.salario, req.body.tipo],
                 (error, resultado, field) => {
                     conn.release();
