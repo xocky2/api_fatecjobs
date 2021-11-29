@@ -1,9 +1,9 @@
 {
     "env" : {
-        "MYSQL_USER": "fatecjobs",
-        "MYSQL_PASSWORD": "asd123456",
-        "MYSQL_DATABASE": "fatecjobs",
-        "MYSQL_HOST": "mysql01-farm10.kinghost.net",
+        "MYSQL_USER": "b1e5a01e16509f",
+        "MYSQL_PASSWORD": "4fbac750",
+        "MYSQL_DATABASE": "heroku_07ec9e33f4e979c",
+        "MYSQL_HOST": "us-cdbr-east-04.cleardb.com",
         "MYSQL_PORT": 3306
     }
 }

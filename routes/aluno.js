@@ -15,12 +15,14 @@ const storage = multer.diskStorage({
 });
 const upload = multer({storage: storage});
 
+
+
 //retorna todos os alunos
 router.get('/', (req, res, next) => {
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'SELECT * FROM aluno;',
+            'SELECT idaluno,ra,email,nome,telefone,bio,empregado,foto,github FROM aluno;',
             (error, resultado,fields) =>{
                 if(error){return res.status(500).send({error: error})}
                 return res.status(200).send({response: resultado})
@@ -34,7 +36,7 @@ router.post('/login',(req, res, next)=>{
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'SELECT * FROM aluno WHERE ra = ? AND senha= ?;',
+            'SELECT idaluno,ra,email,nome,telefone,bio,empregado,foto,github FROM aluno WHERE ra = ? AND senha= ?;',
             [req.body.ra,req.body.senha],
             (error, resultado,fields) =>{
                 conn.release();
