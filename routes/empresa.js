@@ -32,6 +32,22 @@ router.get('/', (req, res, next) => {
             )
         });
         //return res.status(200).send({response: req.body})
+        //prcura por ID
+    }else if(req.body.idempresa){
+        mysql.getConnection((error,conn)=>{
+            if(error){return res.status(500).send({error: error})}
+            conn.query(
+                `SELECT idempresa,email,nome_fantasia,area_atuacao,telefone,cidade,bio,foto FROM empresa where idempresa = ${req.body.idempresa};`,
+                (error, resultado,fields) =>{
+                    if(error){return res.status(500).send({error: error})}
+                    if (!resultado.length){return res.status(404).send({mensagem: "Empresa não encontrada"})};
+                    return res.status(200).send({response: resultado});
+                   
+
+                }
+            )
+        });
+
     }else{
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
