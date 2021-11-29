@@ -62,8 +62,8 @@ router.post('/', upload.single('aluno_imagem'), (req, res, next) => {
         if(error){return res.status(500).send({error: error, path:storage.destination})}
 
         conn.query(
-            'insert into aluno (ra,email,senha,nome,bio,empregado,foto,github)values(?,?,?,?,?,?,?,?)',
-            [req.body.ra, req.body.email,req.body.senha,req.body.nome,req.body.bio,req.body.empregado,req.file.path, req.body.github],
+            'insert into aluno (ra,email,senha,nome,telefone,bio,empregado,foto,github)values(?,?,?,?,?,?,?,?,?)',
+            [req.body.ra,req.body.email,req.body.senha,req.body.nome,req.body.telefone,req.body.bio,req.body.empregado,req.file.path, req.body.github],
             
             (error, resultado, field) => {
                 conn.release();
