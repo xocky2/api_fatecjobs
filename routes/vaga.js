@@ -51,7 +51,7 @@ router.get('/candidatura', (req, res, next) => {
         mysql.getConnection((error,conn)=>{
             if(error){return res.status(500).send({error: error})}
             conn.query(
-                `SELECT * FROM candidatura inner join aluno on candidatura.idaluno_fk= aluno.idaluno where candidatura.idvaga_fk = ?;`,
+                `SELECT candidatura.idcandidatura, candidatura.idvaga_fk, aluno.idaluno, aluno.ra, aluno.email,aluno.nome,aluno.telefone,aluno.bio,aluno.empregado,aluno.foto,aluno.github FROM candidatura inner join aluno on candidatura.idaluno_fk= aluno.idaluno where candidatura.idvaga_fk = ?;`,
                 [req.body.idvaga],
                 (error, resultado,fields) =>{
                     conn.release();
