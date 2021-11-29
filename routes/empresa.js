@@ -51,7 +51,7 @@ router.post('/login',(req, res, next)=>{
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'SELECT * FROM empresa WHERE email = ? AND senha= ?;',
+            'SELECT idempresa,email,nome_fantasia,area_atuacao,telefone,cidade,bio,foto FROM empresa WHERE email = ? AND senha= ?;',
             [req.body.email,req.body.senha],
             (error, resultado,fields) =>{
                 conn.release();
