@@ -55,33 +55,61 @@ router.post('/login',(req, res, next)=>{
 });
 
 //insere um aluno
-router.post('/', upload.single('aluno_imagem'), (req, res, next) => {
-    console.log(req.file);
+router.post('/',upload.single('aluno_imagem'), (req, res, next) => { 
+    //console.log(req.file);
         if ( req.body.senha === req.body.confirmPassword){
-    mysql.getConnection((error,conn)=>{
-        if(error){return res.status(500).send({error: error, path:storage.destination})}
-
-        conn.query(
-            'insert into aluno (ra,email,senha,nome,telefone,bio,empregado,foto,github)values(?,?,?,?,?,?,?,?,?)',
-            [req.body.ra,req.body.email,req.body.senha,req.body.nome,req.body.telefone,req.body.bio,req.body.empregado,req.file.path, req.body.github],
+            if (req.file){
+                mysql.getConnection((error,conn)=>{
+                    if(error){return res.status(500).send({error: error, path:storage.destination})}
+        
+                    conn.query(
+                        'insert into aluno (ra,email,senha,nome,telefone,bio,empregado,foto,github)values(?,?,?,?,?,?,?,?,?)',
+                        [req.body.ra,req.body.email,req.body.senha,req.body.nome,req.body.telefone,req.body.bio,req.body.empregado,req.file.path, req.body.github],
+                        
+                        (error, resultado, field) => {
+                            conn.release();
+                            if(error){
+                                if (error.errno == 1062){
+                                    return res.status(500).send({response: "RA já cadastrado"})
+                                }
+                                return res.status(500).send({error: error})
+                            }
             
-            (error, resultado, field) => {
-                conn.release();
-                if(error){
-                    if (error.errno == 1062){
-                        return res.status(500).send({response: "RA já cadastrado"})
-                    }
-                    return res.status(500).send({error: error})
-                }
-
-                res.status(201).send({
-                    mensagem: 'Aluno inserido com sucesso',
-                    idaluno: resultado.insertId
-                 });
+                            res.status(201).send({
+                                mensagem: 'Aluno inserido com sucesso',
+                                idaluno: resultado.insertId
+                             });
+                        }
+                        
+                    )
+                });
+            }else{
+                mysql.getConnection((error,conn)=>{
+                    if(error){return res.status(500).send({error: error, path:storage.destination})}
+        
+                    conn.query(
+                        'insert into aluno (ra,email,senha,nome,telefone,bio,empregado,foto,github)values(?,?,?,?,?,?,?,?,?)',
+                        [req.body.ra,req.body.email,req.body.senha,req.body.nome,req.body.telefone,req.body.bio,req.body.empregado,null, req.body.github],
+                        
+                        (error, resultado, field) => {
+                            conn.release();
+                            if(error){
+                                if (error.errno == 1062){
+                                    return res.status(500).send({response: "RA já cadastrado"})
+                                }
+                                return res.status(500).send({error: error})
+                            }
+            
+                            res.status(201).send({
+                                mensagem: 'Aluno inserido com sucesso',
+                                idaluno: resultado.insertId
+                             });
+                        }
+                        
+                    )
+                });
             }
-            
-        )
-    });
+    
 }else{
     return res.status(500).send({response: "Senhas não coincidem"})
 }

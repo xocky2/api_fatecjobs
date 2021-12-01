@@ -87,32 +87,61 @@ router.post('/login',(req, res, next)=>{
 
 //insere uma empresa
 router.post('/',  upload.single('empresa_imagem'),(req, res, next) => {
-    console.log(req.file);
     if ( req.body.senha === req.body.confirmPassword){
-        mysql.getConnection((error,conn)=>{
-            if(error){return res.status(500).send({error: error})}
-    
-            conn.query(
-                'insert into empresa (email,senha,nome_fantasia,area_atuacao,cidade,bio,foto) values(?,?,?,?,?,?,?);',
-                [req.body.email, req.body.senha, req.body.nome_fantasia, req.body.area_atuacao, req.body.cidade, req.body.bio, req.file.path],
-                
-                (error, resultado, field) => {
-                    conn.release();
-                    if(error){
-                        if (error.errno == 1062){
-                            return res.status(500).send({response: "Email já cadastrado"})
+        // if para verificar se existe um arquivo na requisição
+        if (req.file){ 
+            mysql.getConnection((error,conn)=>{
+                if(error){return res.status(500).send({error: error})}
+        
+                conn.query(
+                    'insert into empresa (email,senha,nome_fantasia,area_atuacao,cidade,bio,foto) values(?,?,?,?,?,?,?);',
+                    [req.body.email, req.body.senha, req.body.nome_fantasia, req.body.area_atuacao, req.body.cidade, req.body.bio, req.file.path],
+                    
+                    (error, resultado, field) => {
+                        conn.release();
+                        if(error){
+                            if (error.errno == 1062){
+                                return res.status(500).send({response: "Email já cadastrado"})
+                            }
+                            return res.status(500).send({error: error})
                         }
-                        return res.status(500).send({error: error})
+        
+                        res.status(201).send({
+                            mensagem: 'Empresa cadastrada com sucesso',
+                            idempresa: resultado.insertId
+                         });
                     }
-    
-                    res.status(201).send({
-                        mensagem: 'Empresa cadastrada com sucesso',
-                        idempresa: resultado.insertId
-                     });
-                }
-                
-            )
-        });
+                    
+                )
+            });
+            // caso não exista uma file na requisião ele cai neste else e faz um insert null no banco
+        }else{
+            mysql.getConnection((error,conn)=>{
+                if(error){return res.status(500).send({error: error})}
+        
+                conn.query(
+                    'insert into empresa (email,senha,nome_fantasia,area_atuacao,cidade,bio,foto) values(?,?,?,?,?,?,?);',
+                    [req.body.email, req.body.senha, req.body.nome_fantasia, req.body.area_atuacao, req.body.cidade, req.body.bio,null],
+                    
+                    (error, resultado, field) => {
+                        conn.release();
+                        if(error){
+                            if (error.errno == 1062){
+                                return res.status(500).send({response: "Email já cadastrado"})
+                            }
+                            return res.status(500).send({error: error})
+                        }
+        
+                        res.status(201).send({
+                            mensagem: 'Empresa cadastrada com sucesso',
+                            idempresa: resultado.insertId
+                         });
+                    }
+                    
+                )
+            });
+        }
+        
     }else{
         return res.status(500).send({response: "Senha não coincidem"})
     }
