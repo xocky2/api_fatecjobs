@@ -14,11 +14,12 @@ app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: false})); //apenas dados simples
 app.use(bodyParser.json()); //apenas json de entrada no body
 
+/*
 app.use((req,res,next)=>{
     res.header('Acces-Control-Allow-Origin','*');
-    res.header('Acces-Control-Allow-Header',
-    'Origin, X-Requrested-With, Content-Type,Accept, Authorisation'
-    );
+    //res.header('Acces-Control-Allow-Header',
+    //'Origin, X-Requrested-With, Content-Type,Accept, Authorisation'
+   // );
 
     if(req.method === 'OPTIONS'){
         res.header('Acess-Control-Allow-Methods','PUT, POST, PATCH, DELETE, GET');
@@ -27,6 +28,7 @@ app.use((req,res,next)=>{
 
     next();
 })
+*/
 
 app.use('/aluno', rotaAluno);
 app.use('/empresa', rotaEmpresa);
@@ -35,7 +37,7 @@ app.use('/vaga', rotaVaga);
 
 // Quando não econtra rota, entra aqui 
 app.use((req,res,next)=>{
-    const erro = new Error('Não encontrado');
+    const erro = new Error('Ops, rota não encontrada');
     erro.status = 404;
     next(erro);
 });
