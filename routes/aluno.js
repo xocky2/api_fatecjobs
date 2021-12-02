@@ -19,6 +19,20 @@ const upload = multer({storage: storage});
 
 //retorna todos os alunos
 router.get('/', (req, res, next) => {
+    if  (req.body.id_aluno){
+        mysql.getConnection((error,conn)=>{
+            if(error){return res.status(500).send({error: error})}
+            conn.query(
+                `SELECT id_aluno,ra,email,nome,telefone,bio,empregado,foto,github FROM aluno where id_aluno = ${req.body.id_aluno};`,
+                (error, resultado,fields) =>{
+                    if(error){return res.status(500).send({error: error})}
+                    return res.status(200).send({response: resultado})
+                }
+            )
+        });
+
+
+    }else{
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
@@ -28,7 +42,7 @@ router.get('/', (req, res, next) => {
                 return res.status(200).send({response: resultado})
             }
         )
-    });
+    });}
 });
 
 //retorna um aluno em especifico
