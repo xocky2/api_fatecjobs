@@ -14,9 +14,9 @@ app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: false})); //apenas dados simples
 app.use(bodyParser.json()); //apenas json de entrada no body
 
-/*
+
 app.use((req,res,next)=>{
-    res.header('Acces-Control-Allow-Origin','*');
+    //res.header('Acces-Control-Allow-Origin','*');
     //res.header('Acces-Control-Allow-Header',
     //'Origin, X-Requrested-With, Content-Type,Accept, Authorisation'
    // );
@@ -28,7 +28,6 @@ app.use((req,res,next)=>{
 
     next();
 })
-*/
 
 app.use('/aluno', rotaAluno);
 app.use('/empresa', rotaEmpresa);
