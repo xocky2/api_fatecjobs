@@ -22,7 +22,7 @@ router.get('/', (req, res, next) => {
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'SELECT idaluno,ra,email,nome,telefone,bio,empregado,foto,github FROM aluno;',
+            'SELECT id_aluno,ra,email,nome,telefone,bio,empregado,foto,github FROM aluno;',
             (error, resultado,fields) =>{
                 if(error){return res.status(500).send({error: error})}
                 return res.status(200).send({response: resultado})
@@ -36,7 +36,7 @@ router.post('/login',(req, res, next)=>{
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'SELECT idaluno,ra,email,nome,telefone,bio,empregado,foto,github FROM aluno WHERE ra = ? AND senha= ?;',
+            'SELECT id_aluno,ra,email,nome,telefone,bio,empregado,foto,github FROM aluno WHERE ra = ? AND senha= ?;',
             [req.body.ra,req.body.senha],
             (error, resultado,fields) =>{
                 conn.release();
@@ -77,7 +77,7 @@ router.post('/',upload.single('aluno_imagem'), (req, res, next) => {
             
                             res.status(201).send({
                                 mensagem: 'Aluno inserido com sucesso',
-                                idaluno: resultado.insertId
+                                id_aluno: resultado.insertId
                              });
                         }
                         
@@ -102,7 +102,7 @@ router.post('/',upload.single('aluno_imagem'), (req, res, next) => {
             
                             res.status(201).send({
                                 mensagem: 'Aluno inserido com sucesso',
-                                idaluno: resultado.insertId
+                                id_aluno: resultado.insertId
                              });
                         }
                         
@@ -122,8 +122,8 @@ router.patch('/', (req, res, next) => {
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'UPDATE ALUNO SET ra =?, email = ?, senha = ?, nome = ?, bio = ?, empregado = ?, foto = ?, github = ? where idaluno = ?',
-            [req.body.ra, req.body.email,req.body.senha,req.body.nome,req.body.bio,req.body.empregado,req.body.foto, req.body.github, req.body.idaluno],
+            'UPDATE ALUNO SET ra =?, email = ?, senha = ?, nome = ?, bio = ?, empregado = ?, foto = ?, github = ? where id_aluno = ?',
+            [req.body.ra, req.body.email,req.body.senha,req.body.nome,req.body.bio,req.body.empregado,req.body.foto, req.body.github, req.body.id_aluno],
             
             (error, resultado, field) => {
                 conn.release();
@@ -132,7 +132,7 @@ router.patch('/', (req, res, next) => {
                 if (resultado.affectedRows == 0 ) {
                     return res.status(500).send({response: "Aluno não alterado"})
                 }else{
-                    res.status(202).send({response: 'Dados alterados com sucesso'});
+                    res.status(202).send({response: 'Dados alterados csom sucesso'});
                 }
                 
             }
@@ -146,8 +146,8 @@ router.delete('/', (req, res, next) => {
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'DELETE FROM aluno WHERE idaluno= ?',
-            [req.body.idaluno],
+            'DELETE FROM aluno WHERE id_aluno= ?',
+            [req.body.id_aluno],
             
             (error, resultado, field) => {
                 conn.release();

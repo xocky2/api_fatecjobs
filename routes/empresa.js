@@ -22,7 +22,7 @@ router.get('/', (req, res, next) => {
         mysql.getConnection((error,conn)=>{
             if(error){return res.status(500).send({error: error})}
             conn.query(
-                `SELECT idempresa,email,nome_fantasia,area_atuacao,telefone,cidade,bio,foto FROM empresa where nome_fantasia like ("%${req.body.nome_fantasia}%");`,
+                `SELECT id_empresa,email,nome_fantasia,area_atuacao,telefone,cidade,bio,foto FROM empresa where nome_fantasia like ("%${req.body.nome_fantasia}%");`,
                 (error, resultado,fields) =>{
                     if(error){return res.status(500).send({error: error})}
                     return res.status(200).send({response: resultado});
@@ -33,11 +33,11 @@ router.get('/', (req, res, next) => {
         });
         //return res.status(200).send({response: req.body})
         //prcura por ID
-    }else if(req.body.idempresa){
+    }else if(req.body.id_empresa){
         mysql.getConnection((error,conn)=>{
             if(error){return res.status(500).send({error: error})}
             conn.query(
-                `SELECT idempresa,email,nome_fantasia,area_atuacao,telefone,cidade,bio,foto FROM empresa where idempresa = ${req.body.idempresa};`,
+                `SELECT id_empresa,email,nome_fantasia,area_atuacao,telefone,cidade,bio,foto FROM empresa where id_empresa = ${req.body.id_empresa};`,
                 (error, resultado,fields) =>{
                     if(error){return res.status(500).send({error: error})}
                     if (!resultado.length){return res.status(404).send({mensagem: "Empresa não encontrada"})};
@@ -52,7 +52,7 @@ router.get('/', (req, res, next) => {
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'SELECT idempresa,email,nome_fantasia,area_atuacao,telefone,cidade,bio,foto FROM empresa;',
+            'SELECT id_empresa,email,nome_fantasia,area_atuacao,telefone,cidade,bio,foto FROM empresa;',
             (error, resultado,fields) =>{
                 if(error){return res.status(500).send({error: error})}
                 return res.status(200).send({response: resultado})
@@ -67,7 +67,7 @@ router.post('/login',(req, res, next)=>{
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'SELECT idempresa,email,nome_fantasia,area_atuacao,telefone,cidade,bio,foto FROM empresa WHERE email = ? AND senha= ?;',
+            'SELECT id_empresa,email,nome_fantasia,area_atuacao,telefone,cidade,bio,foto FROM empresa WHERE email = ? AND senha= ?;',
             [req.body.email,req.body.senha],
             (error, resultado,fields) =>{
                 conn.release();
@@ -108,7 +108,7 @@ router.post('/',  upload.single('empresa_imagem'),(req, res, next) => {
         
                         res.status(201).send({
                             mensagem: 'Empresa cadastrada com sucesso',
-                            idempresa: resultado.insertId
+                            id_empresa: resultado.insertId
                          });
                     }
                     
@@ -134,7 +134,7 @@ router.post('/',  upload.single('empresa_imagem'),(req, res, next) => {
         
                         res.status(201).send({
                             mensagem: 'Empresa cadastrada com sucesso',
-                            idempresa: resultado.insertId
+                            id_empresa: resultado.insertId
                          });
                     }
                     
@@ -155,8 +155,8 @@ router.patch('/', (req, res, next) => {
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'UPDATE empresa SET email =?, senha = ?, nome_fantasia = ?, area_atuacao = ?,cidade = ?, bio = ?, foto = ? where idempresa = ?;',
-            [req.body.email, req.body.senha, req.body.nome_fantasia, req.body.area_atuacao, req.body.cidade, req.body.bio, req.body.foto, req.body.idempresa],
+            'UPDATE empresa SET email =?, senha = ?, nome_fantasia = ?, area_atuacao = ?,cidade = ?, bio = ?, foto = ? where id_empresa = ?;',
+            [req.body.email, req.body.senha, req.body.nome_fantasia, req.body.area_atuacao, req.body.cidade, req.body.bio, req.body.foto, req.body.id_empresa],
             
             (error, resultado, field) => {
                 conn.release();
@@ -179,8 +179,8 @@ router.delete('/', (req, res, next) => {
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'DELETE FROM empresa WHERE idempresa= ?',
-            [req.body.idempresa],
+            'DELETE FROM empresa WHERE id_empresa= ?',
+            [req.body.id_empresa],
             
             (error, resultado, field) => {
                 conn.release();

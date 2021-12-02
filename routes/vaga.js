@@ -8,8 +8,8 @@ router.get('/', (req, res, next) => {
         mysql.getConnection((error,conn)=>{
             if(error){return res.status(500).send({error: error})}
             conn.query(
-                `SELECT * FROM vaga where idempresa_fk = ?;`,
-                [req.body.idempresa],
+                `SELECT * FROM vaga where id_empresa_fk = ?;`,
+                [req.body.id_empresa],
                 (error, resultado,fields) =>{
                     if(error){return res.status(500).send({error: error})}
                     return res.status(200).send({response: resultado});
@@ -31,14 +31,15 @@ router.get('/', (req, res, next) => {
     }
 });
 
-// candidaturas passando por parâmetro body o idaluno ou
+// candidaturas passando por parâmetro body o id_aluno ou
 router.get('/candidatura', (req, res, next) => {
-    if(req.body.idaluno){
+    if(req.body.id_aluno){
         mysql.getConnection((error,conn)=>{
             if(error){return res.status(500).send({error: error})}
             conn.query(
-                `SELECT * FROM candidatura inner join vaga on candidatura.idvaga_fk= vaga.idvaga where candidatura.idaluno_fk = ?;`,
-                [req.body.idaluno],
+                `SELECT * FROM candidatura inner join vaga on 
+                candidatura.id_vaga_fk= vaga.id_vaga where candidatura.id_aluno_fk = ?;`,
+                [req.body.id_aluno],
                 (error, resultado,fields) =>{
                     conn.release();
                     if(error){return res.status(500).send({error: error})}
@@ -47,12 +48,15 @@ router.get('/candidatura', (req, res, next) => {
                 }
             )
         });
-    }else if (req.body.idvaga){
+    }else if (req.body.id_vaga){
         mysql.getConnection((error,conn)=>{
             if(error){return res.status(500).send({error: error})}
             conn.query(
-                `SELECT candidatura.idcandidatura, candidatura.idvaga_fk, aluno.idaluno, aluno.ra, aluno.email,aluno.nome,aluno.telefone,aluno.bio,aluno.empregado,aluno.foto,aluno.github FROM candidatura inner join aluno on candidatura.idaluno_fk= aluno.idaluno where candidatura.idvaga_fk = ?;`,
-                [req.body.idvaga],
+                `SELECT candidatura.id_candidatura, candidatura.id_vaga_fk, aluno.ida_luno, aluno.ra, 
+                aluno.email,aluno.nome,aluno.telefone,aluno.bio,aluno.empregado,aluno.foto,aluno.github 
+                FROM candidatura inner join aluno 
+                on candidatura.id_aluno_fk= aluno.id_aluno where candidatura.id_vaga_fk = ?;`,
+                [req.body.id_vaga],
                 (error, resultado,fields) =>{
                     conn.release();
                     if(error){return res.status(500).send({error: error})}
@@ -68,14 +72,14 @@ router.get('/candidatura', (req, res, next) => {
 router.post('/candidatura', (req, res, next) => {
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
-        conn.query('insert into candidatura (idaluno_fk,idvaga_fk) values(?,?);',
-            [req.body.idaluno, req.body.idvaga],
+        conn.query('insert into candidatura (id_aluno_fk,id_vaga_fk) values(?,?);',
+            [req.body.id_aluno, req.body.id_vaga],
             (error, resultado, field) => {
                 conn.release();
                 if(error){return res.status(500).send({error: error})}
                 return res.status(201).send({
                     mensagem: 'Candidatura realizada com sucesso',
-                    idcandidatura: resultado.insertId
+                    id_candidatura: resultado.insertId
                  });
             }
             
@@ -91,14 +95,14 @@ router.post('/', (req, res, next) => {
             if(error){return res.status(500).send({error: error})}
     
             conn.query(
-                'insert into vaga (idempresa_fk,titulo,descricao,localizacao,salario,tipo) values(?,?,?,?,?,?);',
-                [req.body.idempresa,req.body.titulo,req.body.descricao, req.body.localizacao, req.body.salario, req.body.tipo],
+                'insert into vaga (id_empresa_fk,titulo,descricao,localizacao,salario,tipo) values(?,?,?,?,?,?);',
+                [req.body.id_empresa,req.body.titulo,req.body.descricao, req.body.localizacao, req.body.salario, req.body.tipo],
                 (error, resultado, field) => {
                     conn.release();
                     if(error){return res.status(500).send({error: error})}
                     res.status(201).send({
                         mensagem: 'Vaga cadastrada com sucesso',
-                        idempresa: resultado.insertId
+                        id_empresa: resultado.insertId
                      });
                 }
                 
@@ -114,8 +118,8 @@ router.patch('/', (req, res, next) => {
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'UPDATE vaga SET descricao = ?,localizacao = ?,salario = ?,tipo = ?',
-            [req.body.descricao, req.body.localizacao, req.body.salario, req.body.tipo],
+            'UPDATE vaga SET descricao = ?,localizacao = ?,salario = ?,tipo = ? where id_vaga = ?' ,
+            [req.body.descricao, req.body.localizacao, req.body.salario, req.body.tipo, req.body.id_vaga],
             
             (error, resultado, field) => {
                 conn.release();
@@ -137,8 +141,8 @@ router.delete('/', (req, res, next) => {
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
-            'DELETE FROM vaga WHERE idvaga= ?',
-            [req.body.idempresa],
+            'DELETE FROM vaga WHERE id_vaga= ?',
+            [req.body.id_vaga],
             
             (error, resultado, field) => {
                 conn.release();
