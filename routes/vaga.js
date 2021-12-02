@@ -91,23 +91,48 @@ router.post('/candidatura', (req, res, next) => {
 
 //insere uma vaga
 router.post('/', (req, res, next) => {
+    if (req.body.id_empresa){
         mysql.getConnection((error,conn)=>{
             if(error){return res.status(500).send({error: error})}
-    
             conn.query(
-                'insert into vaga (id_empresa_fk,titulo,descricao,localizacao,salario,tipo) values(?,?,?,?,?,?);',
-                [req.body.id_empresa,req.body.titulo,req.body.descricao, req.body.localizacao, req.body.salario, req.body.tipo],
-                (error, resultado, field) => {
-                    conn.release();
+                'SELECT * FROM empresa where id_empresa = ?;',
+                [req.body.id_empresa],
+                (error, result,fields) =>{
                     if(error){return res.status(500).send({error: error})}
-                    res.status(201).send({
-                        mensagem: 'Vaga cadastrada com sucesso',
-                        id_empresa: resultado.insertId
-                     });
+                    //return res.status(500).send({mensagem: resultado.length})
+                    if(result.length == 1){
+                        mysql.getConnection((error,conn)=>{
+                            if(error){return res.status(500).send({error: error})}
+                            conn.query(
+                                'insert into vaga (id_empresa_fk,titulo,descricao,localizacao,salario,tipo) values(?,?,?,?,?,?);',
+                                [req.body.id_empresa,req.body.titulo,req.body.descricao, req.body.localizacao, req.body.salario, req.body.tipo],
+                                (error, resultado, field) => {
+                                    conn.release();
+                                    if(error){return res.status(500).send({error: error})}
+                                    res.status(201).send({
+                                        mensagem: 'Vaga cadastrada com sucesso',
+                                        id_vaga: resultado.insertId
+                                     });
+                                }
+                                
+                            )
+                        });
+                    }else{
+                        return res.status(404).send({
+                            mensagem: 'Empresa não econtrada'
+                         });
+
+                    }
+
                 }
-                
             )
         });
+
+    }else{
+        return res.status(404).send({
+            mensagem: 'id_empresa é um dado obrigatório'
+         });
+    }
     
 
 });
