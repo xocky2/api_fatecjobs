@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
-const bodyParser = require('body-parser');
-
+//const bodyParser = require('body-parser');
+const cors = require("cors");
 
 
 const rotaAluno = require('./routes/aluno');
@@ -11,15 +11,16 @@ const rotaVaga = require('./routes/vaga');
 
 app.use(morgan('dev'));
 app.use('/uploads', express.static('uploads'));
-app.use(bodyParser.urlencoded({ extended: false})); //apenas dados simples
-app.use(bodyParser.json()); //apenas json de entrada no body
+app.use(express.urlencoded({ extended: false })) //apenas dados simples
+app.use(express.json())//apenas json de entrada no body
+app.use(cors());
 
-
+/*
 app.use((req,res,next)=>{
-    //res.header('Acces-Control-Allow-Origin','*');
-    //res.header('Acces-Control-Allow-Header',
-    //'Origin, X-Requrested-With, Content-Type,Accept, Authorisation'
-   // );
+    res.header('Acces-Control-Allow-Origin','*');
+    res.header('Acces-Control-Allow-Header',
+    'Origin, X-Requested-With, Content-Type,Accept, Authorization'
+    );
 
     if(req.method === 'OPTIONS'){
         res.header('Acess-Control-Allow-Methods','PUT, POST, PATCH, DELETE, GET');
@@ -28,6 +29,7 @@ app.use((req,res,next)=>{
 
     next();
 })
+*/
 
 app.use('/aluno', rotaAluno);
 app.use('/empresa', rotaEmpresa);
