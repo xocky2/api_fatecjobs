@@ -52,7 +52,7 @@ router.get('/candidatura', (req, res, next) => {
         mysql.getConnection((error,conn)=>{
             if(error){return res.status(500).send({error: error})}
             conn.query(
-                `SELECT candidatura.id_candidatura, candidatura.id_vaga_fk, aluno.ida_luno, aluno.ra, 
+                `SELECT candidatura.id_candidatura, candidatura.id_vaga_fk, aluno.id_aluno, aluno.ra, 
                 aluno.email,aluno.nome,aluno.telefone,aluno.bio,aluno.empregado,aluno.foto,aluno.github 
                 FROM candidatura inner join aluno 
                 on candidatura.id_aluno_fk= aluno.id_aluno where candidatura.id_vaga_fk = ?;`,
@@ -70,21 +70,62 @@ router.get('/candidatura', (req, res, next) => {
 
 //Insere uma candidatura
 router.post('/candidatura', (req, res, next) => {
-    mysql.getConnection((error,conn)=>{
-        if(error){return res.status(500).send({error: error})}
-        conn.query('insert into candidatura (id_aluno_fk,id_vaga_fk) values(?,?);',
-            [req.body.id_aluno, req.body.id_vaga],
-            (error, resultado, field) => {
-                conn.release();
-                if(error){return res.status(500).send({error: error})}
-                return res.status(201).send({
-                    mensagem: 'Candidatura realizada com sucesso',
-                    id_candidatura: resultado.insertId
-                 });
-            }
-            
-        )
-    });
+    if (req.body.id_aluno, req.body.id_vaga){
+        mysql.getConnection((error,conn)=>{
+            if(error){return res.status(500).send({error: error})}
+            conn.query(
+                `SELECT * FROM aluno where id_aluno = ?;`,
+                [req.body.id_aluno],
+                (error, resultado,fields) =>{
+                    if(error){return res.status(500).send({error: error})}
+                   // return res.status(200).send({response: resultado});
+                   if (resultado.length == 1){
+                    conn.query(
+                        `SELECT * FROM vaga where id_vaga = ?;`,
+                        [req.body.id_vaga],
+                        (error, resultado,fields) =>{
+                            if(error){return res.status(500).send({error: error})}
+                           // return res.status(200).send({response: resultado});
+                           if (resultado.length == 1){
+
+                            mysql.getConnection((error,conn)=>{
+                                if(error){return res.status(500).send({error: error})}
+                                conn.query('insert into candidatura (id_aluno_fk,id_vaga_fk) values(?,?);',
+                                    [req.body.id_aluno, req.body.id_vaga],
+                                    (error, resultado, field) => {
+                                        conn.release();
+                                        if(error){return res.status(500).send({error: error})}
+                                        return res.status(201).send({
+                                            mensagem: 'Candidatura realizada com sucesso',
+                                            id_candidatura: resultado.insertId
+                                         });
+                                    }
+                                    
+                                )
+                            });
+
+
+
+                           }else{
+                            return res.status(404).send({error: "Vaga não encontrada"})
+                           }
+        
+                        }
+                    )
+                   }else{
+                    return res.status(404).send({error: "Aluno não encontrado"})
+                   }
+
+                }
+            )
+        });
+
+
+}else{
+    return res.status(404).send({
+        mensagem: 'id_aluno e id_vaga são campos obrigatórios'
+     });
+}
 
 
 });
