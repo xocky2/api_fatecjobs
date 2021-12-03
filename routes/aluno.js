@@ -58,7 +58,7 @@ router.post('/login',(req, res, next)=>{
                 if (resultado.length){
                     return res.status(200).send({response: resultado})
                 }else{
-                    return res.status(200).send({response: "RA ou senha incorretos."})
+                    return res.status(401).send({response: "RA ou senha incorretos."})
                 }
                 
                 
@@ -109,7 +109,7 @@ router.post('/',upload.single('aluno_imagem'), (req, res, next) => {
                             conn.release();
                             if(error){
                                 if (error.errno == 1062){
-                                    return res.status(500).send({response: "RA já cadastrado"})
+                                    return res.status(401).send({response: "RA já cadastrado"})
                                 }
                                 return res.status(500).send({error: error})
                             }
@@ -125,7 +125,7 @@ router.post('/',upload.single('aluno_imagem'), (req, res, next) => {
             }
     
 }else{
-    return res.status(500).send({response: "Senhas não coincidem"})
+    return res.status(401).send({response: "Senhas não coincidem"})
 }
 
 });
@@ -144,7 +144,7 @@ router.patch('/', (req, res, next) => {
                 if(error){return res.status(500).send({error: error})}
 
                 if (resultado.affectedRows == 0 ) {
-                    return res.status(500).send({response: "Aluno não alterado"})
+                    return res.status(401).send({response: "Aluno não alterado"})
                 }else{
                     res.status(202).send({response: 'Dados alterados csom sucesso'});
                 }
@@ -172,7 +172,7 @@ router.delete('/', (req, res, next) => {
                 if (resultado.affectedRows =0 ) {
                     return res.status(500).send({response: "Aluno não excluido"})
                 }else{
-                    res.status(202).send({mensagem: 'Aluno excluido com sucesso'});
+                    res.status(200).send({mensagem: 'Aluno excluido com sucesso'});
                 }
                 
             }

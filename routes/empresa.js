@@ -40,7 +40,7 @@ router.get('/', (req, res, next) => {
                 `SELECT id_empresa,email,nome_fantasia,area_atuacao,telefone,cidade,bio,foto FROM empresa where id_empresa = ${req.body.id_empresa};`,
                 (error, resultado,fields) =>{
                     if(error){return res.status(500).send({error: error})}
-                    if (!resultado.length){return res.status(404).send({mensagem: "Empresa não encontrada"})};
+                    if (!resultado.length){return res.status(404).send({response: "Empresa não encontrada"})};
                     return res.status(200).send({response: resultado});
                    
 
@@ -75,7 +75,7 @@ router.post('/login',(req, res, next)=>{
                 if (resultado.length){
                     return res.status(200).send({response: resultado})
                 }else{
-                    return res.status(200).send({response: "Email ou senha incorretos."})
+                    return res.status(401).send({response: "Email ou senha incorretos."})
                 }
                 
                 
@@ -101,14 +101,13 @@ router.post('/',  upload.single('empresa_imagem'),(req, res, next) => {
                         conn.release();
                         if(error){
                             if (error.errno == 1062){
-                                return res.status(500).send({response: "Email já cadastrado"})
+                                return res.status(401).send({response: "Email já cadastrado"})
                             }
                             return res.status(500).send({error: error})
                         }
-        
+                        
                         res.status(201).send({
-                            mensagem: 'Empresa cadastrada com sucesso',
-                            id_empresa: resultado.insertId
+                            
                          });
                     }
                     
@@ -124,26 +123,56 @@ router.post('/',  upload.single('empresa_imagem'),(req, res, next) => {
                     [req.body.email, req.body.senha, req.body.nome_fantasia, req.body.area_atuacao, req.body.cidade, req.body.bio,null],
                     
                     (error, resultado, field) => {
-                        conn.release();
                         if(error){
                             if (error.errno == 1062){
-                                return res.status(500).send({response: "Email já cadastrado"})
+                                return res.status(401).send({response: "Email já cadastrado"})
                             }
                             return res.status(500).send({error: error})
                         }
+                        //res.status(201).send({ });
+                        conn.query(
+                            'select * from empresa where id_empresa = ?;',
+                            [resultado.insertId],
+                            (error, result, field) => {
+                                conn.release();
+                                if(error){
+                                    return res.status(500).send({error: error})
+                                }
+                                if(result.length == 1){
+                                  const response = {
+                                    success: "true",
+                                    data: result.map(empr =>{
+                                        return {
+                                            email: empr.email,
+                                            nome_fantasia: empr.nome_fantasia,
+                                            telefone: empr.telefone,
+                                            area_atuacao: empr.area_atuacao,
+                                            cidade : empr.cidade,
+                                            bio: empr.bio
+                                        }
+                                    })
+                                }
+                                return res.status(201).send({
+                                    response
+                                 })
+                                }
+                                
         
-                        res.status(201).send({
-                            mensagem: 'Empresa cadastrada com sucesso',
-                            id_empresa: resultado.insertId
-                         });
+                              
+                            }
+                            
+                        )
                     }
                     
                 )
+                
+                
+
             });
         }
         
     }else{
-        return res.status(500).send({response: "Senha não coincidem"})
+        return res.status(401).send({response: "Senha não coincidem"})
     }
     
 
@@ -191,7 +220,7 @@ router.delete('/', (req, res, next) => {
                 if (resultado.affectedRows == 0 ) {
                     return res.status(500).send({response: "empresa não excluida"})
                 }else{
-                    res.status(202).send({mensagem: 'Empresa excluida com sucesso'});
+                    res.status(202).send({response: 'Empresa excluida com sucesso'});
                 }
                 
             }
