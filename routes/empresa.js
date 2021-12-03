@@ -73,7 +73,25 @@ router.post('/login',(req, res, next)=>{
                 conn.release();
                 if(error){return res.status(500).send({error: error})}
                 if (resultado.length){
-                    return res.status(200).send({response: resultado})
+                   // return res.status(200).send({response: resultado})
+                   
+                   const response = {
+                    success: "true",
+                    data: resultado.map(empr =>{
+                        return {
+                            email: empr.email,
+                            nome_fantasia: empr.nome_fantasia,
+                            telefone: empr.telefone,
+                            area_atuacao: empr.area_atuacao,
+                            cidade : empr.cidade,
+                            bio: empr.bio
+                        }
+                    })
+                }
+
+                return res.status(201).send({
+                    response
+                 })
                 }else{
                     return res.status(401).send({response: "Email ou senha incorretos."})
                 }

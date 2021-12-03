@@ -56,7 +56,27 @@ router.post('/login',(req, res, next)=>{
                 conn.release();
                 if(error){return res.status(500).send({error: error})}
                 if (resultado.length){
-                    return res.status(200).send({response: resultado})
+                    //return res.status(200).send({response: resultado})
+                    const response = {
+                        success: "true",
+                        data: resultado.map(alu =>{
+                            return {
+                                id_aluno: alu.id_aluno,
+                                ra: alu.ra,
+                                email: alu.email,
+                                nome: alu.nome,
+                                telefone : alu.telefone,
+                                bio: alu.bio,
+                                empregado: alu.empregado,
+                                foto: alu.foto,
+                                github: alu.github
+                            }
+                        })
+                    }
+    
+                    return res.status(201).send({
+                        response
+                     })
                 }else{
                     return res.status(401).send({response: "RA ou senha incorretos."})
                 }
@@ -79,9 +99,8 @@ router.post('/',upload.single('aluno_imagem'), (req, res, next) => {
                     conn.query(
                         'insert into aluno (ra,email,senha,nome,telefone,bio,empregado,foto,github)values(?,?,?,?,?,?,?,?,?)',
                         [req.body.ra,req.body.email,req.body.senha,req.body.nome,req.body.telefone,req.body.bio,req.body.empregado,req.file.path, req.body.github],
-                        
                         (error, resultado, field) => {
-                            conn.release();
+
                             if(error){
                                 if (error.errno == 1062){
                                     return res.status(500).send({response: "RA já cadastrado"})
@@ -89,10 +108,42 @@ router.post('/',upload.single('aluno_imagem'), (req, res, next) => {
                                 return res.status(500).send({error: error})
                             }
             
-                            res.status(201).send({
-                                mensagem: 'Aluno inserido com sucesso',
-                                id_aluno: resultado.insertId
-                             });
+
+                             conn.query(
+                                'SELECT id_aluno,ra,email,nome,telefone,bio,empregado,foto,github FROM aluno WHERE id_aluno  = ?;',
+                                [resultado.insertId],
+                                (error, resultado,fields) =>{
+                                    conn.release();
+                                    if(error){return res.status(500).send({error: error})}
+                                    if (resultado.length){
+                                        //return res.status(200).send({response: resultado})
+                                        const response = {
+                                            success: "true",
+                                            data: resultado.map(alu =>{
+                                                return {
+                                                    id_aluno: alu.id_aluno,
+                                                    ra: alu.ra,
+                                                    email: alu.email,
+                                                    nome: alu.nome,
+                                                    telefone : alu.telefone,
+                                                    bio: alu.bio,
+                                                    empregado: alu.empregado,
+                                                    foto: alu.foto,
+                                                    github: alu.github
+                                                }
+                                            })
+                                        }
+                        
+                                        return res.status(201).send({
+                                            response
+                                         })
+                                    }else{
+                                        return res.status(401).send({response: "RA ou senha incorretos."})
+                                    }
+                                    
+                                    
+                                }
+                            )
                         }
                         
                     )
@@ -106,7 +157,7 @@ router.post('/',upload.single('aluno_imagem'), (req, res, next) => {
                         [req.body.ra,req.body.email,req.body.senha,req.body.nome,req.body.telefone,req.body.bio,req.body.empregado,null, req.body.github],
                         
                         (error, resultado, field) => {
-                            conn.release();
+                            
                             if(error){
                                 if (error.errno == 1062){
                                     return res.status(401).send({response: "RA já cadastrado"})
@@ -114,10 +165,41 @@ router.post('/',upload.single('aluno_imagem'), (req, res, next) => {
                                 return res.status(500).send({error: error})
                             }
             
-                            res.status(201).send({
-                                mensagem: 'Aluno inserido com sucesso',
-                                id_aluno: resultado.insertId
-                             });
+                            conn.query(
+                                'SELECT id_aluno,ra,email,nome,telefone,bio,empregado,foto,github FROM aluno WHERE id_aluno  = ?;',
+                                [resultado.insertId],
+                                (error, resultado,fields) =>{
+                                    conn.release();
+                                    if(error){return res.status(500).send({error: error})}
+                                    if (resultado.length){
+                                        //return res.status(200).send({response: resultado})
+                                        const response = {
+                                            success: "true",
+                                            data: resultado.map(alu =>{
+                                                return {
+                                                    id_aluno: alu.id_aluno,
+                                                    ra: alu.ra,
+                                                    email: alu.email,
+                                                    nome: alu.nome,
+                                                    telefone : alu.telefone,
+                                                    bio: alu.bio,
+                                                    empregado: alu.empregado,
+                                                    foto: alu.foto,
+                                                    github: alu.github
+                                                }
+                                            })
+                                        }
+                        
+                                        return res.status(201).send({
+                                            response
+                                         })
+                                    }else{
+                                        return res.status(401).send({response: "RA ou senha incorretos."})
+                                    }
+                                    
+                                    
+                                }
+                            )
                         }
                         
                     )
