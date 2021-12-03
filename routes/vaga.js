@@ -6,7 +6,7 @@ const mysql = require('../mysql').pool;
 router.get('/', (req, res, next) => {
     if(req.body.idempresa){
         mysql.getConnection((error,conn)=>{
-            if(error){return res.status(500).send({error: error})}
+            if(error){return res.statutipos(500).send({error: error})}
             conn.query(
                 `SELECT * FROM vaga where id_empresa_fk = ?;`,
                 [req.body.id_empresa],
@@ -93,7 +93,7 @@ router.post('/candidatura', (req, res, next) => {
                                         conn.release();
                                         if(error){return res.status(500).send({error: error})}
                                         return res.status(201).send({
-                                            mensagem: 'Candidatura realizada com sucesso',
+                                            response: 'Candidatura realizada com sucesso',
                                             id_candidatura: resultado.insertId
                                          });
                                     }
@@ -119,8 +119,8 @@ router.post('/candidatura', (req, res, next) => {
 
 
 }else{
-    return res.status(404).send({
-        mensagem: 'id_aluno e id_vaga são campos obrigatórios'
+    return res.status(401).send({
+        response: 'id_aluno e id_vaga são campos obrigatórios'
      });
 }
 
@@ -137,7 +137,7 @@ router.post('/', (req, res, next) => {
                 [req.body.id_empresa],
                 (error, result,fields) =>{
                     if(error){return res.status(500).send({error: error})}
-                    //return res.status(500).send({mensagem: resultado.length})
+                    //return res.status(500).send({response: resultado.length})
                     if(result.length == 1){
                         mysql.getConnection((error,conn)=>{
                             if(error){return res.status(500).send({error: error})}
@@ -148,7 +148,7 @@ router.post('/', (req, res, next) => {
                                     conn.release();
                                     if(error){return res.status(500).send({error: error})}
                                     res.status(201).send({
-                                        mensagem: 'Vaga cadastrada com sucesso',
+                                        response: 'Vaga cadastrada com sucesso',
                                         id_vaga: resultado.insertId
                                      });
                                 }
@@ -157,7 +157,7 @@ router.post('/', (req, res, next) => {
                         });
                     }else{
                         return res.status(404).send({
-                            mensagem: 'Empresa não econtrada'
+                            response: 'Empresa não econtrada'
                          });
 
                     }
@@ -167,8 +167,8 @@ router.post('/', (req, res, next) => {
         });
 
     }else{
-        return res.status(404).send({
-            mensagem: 'id_empresa é um dado obrigatório'
+        return res.status(401).send({
+            response: 'id_empresa é um dado obrigatório'
          });
     }
     
@@ -188,7 +188,7 @@ router.patch('/', (req, res, next) => {
                 conn.release();
                 if(error){return res.status(500).send({error: error})}
                 if (resultado.affectedRows == 0 ) {
-                    return res.status(500).send({response: "Vaga não alterada"})
+                    return res.status(401).send({response: "Vaga não alterada ou não encontrada"})
                 }else{
                     res.status(202).send({response: 'Vaga alterada com sucesso'});
                 }
@@ -216,7 +216,7 @@ router.delete('/', (req, res, next) => {
                 if (resultado.affectedRows == 0 ) {
                     return res.status(500).send({response: "Vaga não excluida"})
                 }else{
-                    res.status(202).send({mensagem: 'Vaga excluida com sucesso'});
+                    res.status(202).send({response: 'Vaga excluida com sucesso'});
                 }
                 
             }

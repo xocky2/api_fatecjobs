@@ -16,6 +16,7 @@ app.use(express.json())//apenas json de entrada no body
 app.use(cors());
 
 /*
+
 app.use((req,res,next)=>{
     res.header('Acces-Control-Allow-Origin','*');
     res.header('Acces-Control-Allow-Header',
@@ -29,6 +30,7 @@ app.use((req,res,next)=>{
 
     next();
 })
+
 */
 
 app.use('/aluno', rotaAluno);
