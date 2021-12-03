@@ -73,8 +73,8 @@ router.post('/login',(req, res, next)=>{
                 conn.release();
                 if(error){return res.status(500).send({error: error})}
                 if (resultado.length){
-                   // return res.status(200).send({response: resultado})
-                   
+                    return res.status(200).send({response: resultado})
+                 /*  
                    const response = {
                     success: "true",
                     data: resultado.map(empr =>{
@@ -92,6 +92,7 @@ router.post('/login',(req, res, next)=>{
                 return res.status(201).send({
                     response
                  })
+                 */
                 }else{
                     return res.status(401).send({response: "Email ou senha incorretos."})
                 }
