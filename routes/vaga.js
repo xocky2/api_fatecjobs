@@ -3,21 +3,27 @@ const router = express.Router();
 const mysql = require('../mysql').pool;
 
 //retorna todas vagas ou se passar por parâmetro body o id da empresa
-router.get('/', (req, res, next) => {
-    if(req.body.id_empresa){
+router.get('/:id_empresa', (req, res, next) => {
         mysql.getConnection((error,conn)=>{
             if(error){return res.statutipos(500).send({error: error})}
             conn.query(
                 `SELECT * FROM vaga where id_empresa_fk = ?;`,
-                [req.body.id_empresa],
+                [req.params.id_empresa],
                 (error, resultado,fields) =>{
                     if(error){return res.status(500).send({error: error})}
-                    return res.status(200).send({response: resultado});
-
+                    if(resultado.length >0){
+                        return res.status(200).send({response: resultado});
+                    }else{
+                        return res.status(404).send({response: "Não há vagas cadastradas"});
+                    }
+                    
                 }
             )
         });
-    }else{
+});
+
+
+router.get('/', (req, res, next) => {
     mysql.getConnection((error,conn)=>{
         if(error){return res.status(500).send({error: error})}
         conn.query(
@@ -28,7 +34,8 @@ router.get('/', (req, res, next) => {
             }
         )
     });
-    }
+
+
 });
 
 // candidaturas passando por parâmetro body o id_aluno ou
