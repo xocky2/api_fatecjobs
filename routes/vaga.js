@@ -4,7 +4,7 @@ const mysql = require('../mysql').pool;
 
 //retorna todas vagas ou se passar por parâmetro body o id da empresa
 router.get('/', (req, res, next) => {
-    if(req.body.idempresa){
+    if(req.body.id_empresa){
         mysql.getConnection((error,conn)=>{
             if(error){return res.statutipos(500).send({error: error})}
             conn.query(
