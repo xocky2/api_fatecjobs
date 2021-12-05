@@ -162,6 +162,7 @@ router.post('/',  upload.single('empresa_imagem'),(req, res, next) => {
                                     success: "true",
                                     data: result.map(empr =>{
                                         return {
+                                            id_empresa: empr.id_empresa,
                                             email: empr.email,
                                             nome_fantasia: empr.nome_fantasia,
                                             telefone: empr.telefone,
