@@ -97,90 +97,6 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-//retorna todas vagas ou se passar por parâmetro query o id da empresa
-// router.get('/', (req, res, next) => {
-//     if(req.query.company){
-//         mysql.getConnection((error,conn)=>{
-//             if(error){return res.status(500).send({error: error})}
-//             var json = {};
-//             conn.query(
-//                 `SELECT * FROM vaga where id_empresa_fk = ?;`,
-//                 [req.query.company],
-//                 (error, resultado,fields) =>{
-//                     if(error){return res.status(500).send({error: error})}
-//                     if(resultado.length >0){
-//                         var string =JSON.stringify(resultado);
-//                         var json =JSON.parse(string);
-//                         //console.log(json.length)
-//                         //console.log(json[1]['id_vaga'])
-//                         //================================================================================================================================
-//                        let tamanho = json.length 
-//                        let vaga = 0;
-//                        let vaga_cand = 0;
-//                         for (let i =0;i<tamanho;i++){
-//                             vaga = json[i]['id_vaga'];
-//                             console.log('I ='+i+' vaga: '+vaga);
-//                             conn.query(
-//                                 `SELECT id_vaga_fk,id_candidatura,id_aluno, ra,email,nome,telefone,bio FROM candidatura inner join aluno on 
-//                                 candidatura.id_aluno_fk = aluno.id_aluno where id_vaga_fk = ?;`,
-//                                 [vaga],
-//                                 (error, resultado2,fields) =>{
-//                                     if(error){return res.status(500).send({error: error})}
-//                                     if(resultado2.length >0){
-//                                         var string2 =JSON.stringify(resultado2);
-//                                         var json2 =JSON.parse(string2);
-//                                         //console.log(json)
-//                                         //console.log(json2)
-                                       
-//                                        let tamanho2 = json2.length;
-//                                         for (let x = 0; x<tamanho2; x++){
-//                                             vaga_cand = json2[x]['id_vaga_fk']
-//                                             console.log('X ='+x+' vaga_cand: '+vaga_cand);
-
-//                                             //console.log('I ='+i)
-//                                             //console.log ('X ='+x)
-//                                             if (vaga == vaga_cand){
-//                                                 console.log("é")
-//                                             }
-//                                         }
-                                        
-//                                     }
-//                                 });
-
-//                         }
-                        
-//                        // console.log(json)
-//                          return res.status(200).send({response: json});
-//                         // adicionar um foreach ou for para não retornar todos os ids, retornar somente um id por vez
-                                                
-//                     }else{
-//                         return res.status(404).send({response: "Não há vagas cadastradas"});
-//                     }
-                    
-//                 }
-//             )
-            
-            
-
-
-
-//         });
-//     }
-//     else{
-//         mysql.getConnection((error,conn)=>{
-//             if(error){return res.status(500).send({error: error})}
-//             conn.query(
-//                 'SELECT * FROM vaga;',
-//                 (error, resultado,fields) =>{
-//                     if(error){return res.status(500).send({error: error})}
-//                     return res.status(200).send({response: resultado})
-//                 }
-//             )
-//         });
-//     }
-        
-// });
-
 
 // candidaturas passando por parâmetro body o id_aluno ou
 
@@ -211,39 +127,6 @@ router.get('/candidatura', async (req, res, next) => {
         
     }
 });
-
-// router.get('/candidatura', (req, res, next) => {
-//     if(req.body.id_aluno){
-//         mysql.getConnection((error,conn)=>{
-//             if(error){return res.status(500).send({error: error})}
-//             conn.query(
-//                 `SELECT * FROM candidatura inner join vaga on 
-//                 candidatura.id_vaga_fk= vaga.id_vaga where candidatura.id_aluno_fk = ?;`,
-//                 [req.body.id_aluno],
-//                 (error, resultado,fields) =>{
-//                     conn.release();
-//                     if(error){return res.status(500).send({error: error})}
-//                     return res.status(200).send({response: resultado});
-
-//                 }
-//             )
-//         });
-//     }else if (req.body.id_vaga){
-//         mysql.getConnection((error,conn)=>{
-//             if(error){return res.status(500).send({error: error})}
-//             conn.query(
-//                 `SELECT candidatura.id_candidatura, candidatura.id_vaga_fk, aluno.id_aluno, aluno.ra,aluno.email,aluno.nome,aluno.telefone,aluno.bio,aluno.empregado,aluno.foto,aluno.github FROM candidatura inner join aluno on candidatura.id_aluno_fk= aluno.id_aluno where candidatura.id_vaga_fk = ?;`,
-//                 [req.body.id_vaga],
-//                 (error, resultado,fields) =>{
-//                     conn.release();
-//                     if(error){return res.status(500).send({error: error})}
-//                     return res.status(200).send({response: resultado});
-
-//                 }
-//             )
-//         });
-//     }
-// });
 
 //Insere uma candidatura
 router.post('/candidatura', (req, res, next) => {
@@ -308,52 +191,113 @@ router.post('/candidatura', (req, res, next) => {
 });
 
 //insere uma vaga
-router.post('/', (req, res, next) => {
-    if (req.body.id_empresa){
-        mysql2.getConnection((error,conn)=>{
-            if(error){return res.status(500).send({error: error})}
-            conn.query(
-                'SELECT * FROM empresa where id_empresa = ?;',
-                [req.body.id_empresa],
-                (error, result,fields) =>{
-                    if(error){return res.status(500).send({error: error})}
-                    //return res.status(500).send({response: resultado.length})
-                    if(result.length == 1){
-                        mysql2.getConnection((error,conn)=>{
-                            if(error){return res.status(500).send({error: error})}
-                            conn.query(
-                                'insert into vaga (id_empresa_fk,titulo,descricao,localizacao,salario,tipo) values(?,?,?,?,?,?);',
-                                [req.body.id_empresa,req.body.titulo,req.body.descricao, req.body.localizacao, req.body.salario, req.body.tipo],
-                                (error, resultado, field) => {
-                                    conn.release();
-                                    if(error){return res.status(500).send({error: error})}
-                                    res.status(201).send({
-                                        response: 'Vaga cadastrada com sucesso',
-                                        id_vaga: resultado.insertId
-                                     });
-                                }
-                                
-                            )
-                        });
-                    }else{
-                        return res.status(404).send({
-                            response: 'Empresa não econtrada'
-                         });
 
+router.post('/', async(req, res, next) => {
+    if(req.body.id_empresa){
+        try {
+            const result = await mysql.execute(`SELECT * FROM empresa where id_empresa = ?;`,
+                [req.body.id_empresa]);
+               // return res.status(200).send({response: result});
+            if(result.length == 1){
+                try {
+                    const result = await mysql.execute(`insert into vaga 
+                    (id_empresa_fk,titulo,descricao,localizacao,salario,tipo) 
+                    values(?,?,?,?,?,?);`,
+                    [req.body.id_empresa,req.body.titulo,req.body.descricao, 
+                    req.body.localizacao, req.body.salario, req.body.tipo]);
+                    //return res.status(200).send({response: result});
+                 const insertid = result.insertId;
+                    try {
+                        console.log(insertid)
+                        const result2 = await mysql.execute(`SELECT * FROM vaga WHERE id_vaga = ?;`,
+                        [insertid]);
+                        console.log(result2)
+                        console.log(result2.length)
+                        if(result2.length==1){
+                            const response ={
+                                message: "Vaga cadastrada com sucesso.",
+                                data: result2.map(vag =>{
+                                    return {
+                                        tipo: vag.tipo,
+                                        salario: vag.salario,
+                                        id_empresa: vag.id_empresa,
+                                        titulo: vag.titulo,
+                                        localizacao: vag.localizacao,
+                                        descricao: vag.descricao
+                                    }
+                                })
+                            }
+                            return res.status(201).send({response: response})
+                        }
+                        
+                    } catch (error) {
+                        console.log(error)
+                        return res.status(500).send({error: error})
                     }
 
+                } catch (error) {
+                    return res.status(500).send({error: error})
                 }
-            )
-        });
-
+            }else{
+                return res.status(404).send({message: 'Empresa não encontrada'})
+            }
+        } catch (error) {
+            return res.status(500).send({error: error});
+        }
+        
     }else{
-        return res.status(401).send({
-            response: 'id_empresa é um dado obrigatório'
-         });
+        return res.status(500).send({response: 'id_empresa é um dado obrigatório'});
     }
-    
+
+
 
 });
+// router.post('/', (req, res, next) => {
+//     if (req.body.id_empresa){
+//         mysql2.getConnection((error,conn)=>{
+//             if(error){return res.status(500).send({error: error})}
+//             conn.query(
+//                 'SELECT * FROM empresa where id_empresa = ?;',
+//                 [req.body.id_empresa],
+//                 (error, result,fields) =>{
+//                     if(error){return res.status(500).send({error: error})}
+//                     //return res.status(500).send({response: resultado.length})
+//                     if(result.length == 1){
+//                         mysql2.getConnection((error,conn)=>{
+//                             if(error){return res.status(500).send({error: error})}
+//                             conn.query(
+//                                 'insert into vaga (id_empresa_fk,titulo,descricao,localizacao,salario,tipo) values(?,?,?,?,?,?);',
+//                                 [req.body.id_empresa,req.body.titulo,req.body.descricao, req.body.localizacao, req.body.salario, req.body.tipo],
+//                                 (error, resultado, field) => {
+//                                     conn.release();
+//                                     if(error){return res.status(500).send({error: error})}
+//                                     res.status(201).send({
+//                                         response: 'Vaga cadastrada com sucesso',
+//                                         id_vaga: resultado.insertId
+//                                      });
+//                                 }
+                                
+//                             )
+//                         });
+//                     }else{
+//                         return res.status(404).send({
+//                             response: 'Empresa não econtrada'
+//                          });
+
+//                     }
+
+//                 }
+//             )
+//         });
+
+//     }else{
+//         return res.status(401).send({
+//             response: 'id_empresa é um dado obrigatório'
+//          });
+//     }
+    
+
+// });
 
 
 //altera vaga
