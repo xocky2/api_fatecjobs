@@ -38,7 +38,7 @@ router.get('/', async(req, res, next) => {
 //retorna o usuario do login REFAT
 
 router.post('/login',async (req, res, next)=>{
-    if(req.body.ra & req.body.senha){
+    if(req.body.ra && req.body.senha){
         try {
             const result = await mysql2.execute(`SELECT id_aluno,ra,email,nome,telefone,bio,empregado,foto,github FROM aluno WHERE ra = ? AND senha= ?;`,
             [req.body.ra,req.body.senha]);
