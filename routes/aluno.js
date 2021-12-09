@@ -79,7 +79,7 @@ router.post('/',upload.single('aluno_imagem'), async(req, res, next) => {
             }else{
                 try {
                     const result = await mysql2.execute(`insert into aluno (ra,email,senha,nome,telefone,bio,empregado,foto,github)values(?,?,?,?,?,?,?,?,?)`,
-                        [req.body.ra,req.body.email,req.body.senha,req.body.nome,req.body.telefone,req.body.bio,req.body.empregado,null, req.body.github]);
+                        [req.body.ra,req.body.email,req.body.senha,req.body.nome,req.body.telefone,req.body.bio,req.body.empregado,null,req.body.github]);
                         if(result){
                             try {
                                 const result2 = await mysql2.execute(`SELECT id_aluno,ra,email,nome,telefone,bio,empregado,foto,github FROM aluno WHERE id_aluno  = ?;`,
@@ -87,7 +87,7 @@ router.post('/',upload.single('aluno_imagem'), async(req, res, next) => {
                                 if(result2.length){
                                     const response = {
                                         success: "true",
-                                        data: result.map(alu =>{
+                                        data: result2.map(alu =>{
                                             return {
                                                 id_aluno: alu.id_aluno,
                                                 ra: alu.ra,
@@ -103,9 +103,10 @@ router.post('/',upload.single('aluno_imagem'), async(req, res, next) => {
                                     }
                                     return res.status(201).send({response});
                                 }else{
-                                    return res.status(401).send({response: "RA ou senha incorretos."})
+                                    return res.status(401).send({response: "Aluno náo cadastrado"})
                                 }
                             } catch (error) {
+                                console.log(error)
                                 return res.status(500).send({error: error})
                             }
                             
